@@ -73,7 +73,7 @@ function validateContactHours() {
   const hoursBlock = html.match(/<div class="contact-address">[\s\S]*?<div class="contact-hours">([\s\S]*?)<\/div>/)?.[1] || '';
   const title = hoursBlock.match(/<h3>([^<]*)<\/h3>/)?.[1] || '';
   const lines = [...hoursBlock.matchAll(/<li>([^<]*)<\/li>/g)].map((match) => match[1]);
-  const expectedLines = ['Понеділок–п’ятниця: 9:00–19:00', 'Субота: 10:00–15:00', 'Неділя: вихідний'];
+  const expectedLines = ['Понеділок–п’ятниця: 9:00–19:00', 'Субота: 10:00–15:00', 'Неділя: зачинено'];
   if (title !== 'Години роботи' || JSON.stringify(lines) !== JSON.stringify(expectedLines)) {
     errors.push('kontakty: opening hours block must list the approved hours inside contact-address');
   }
