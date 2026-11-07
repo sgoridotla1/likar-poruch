@@ -111,3 +111,21 @@ test('rejects RSS feeds whose item GUID differs from its item link', () => {
   });
   assert.match(output, /rss\.xml: item link and GUID must match/);
 });
+
+test('rejects contacts pages whose opening hours block drifts from the approved hours', () => {
+  const output = runMutation((distRoot) => {
+    const contactsPath = path.join(distRoot, 'kontakty', 'index.html');
+    const html = fs.readFileSync(contactsPath, 'utf8');
+    fs.writeFileSync(contactsPath, html.replace('Субота: 10:00–15:00', 'Субота: 10:00–16:00'));
+  });
+  assert.match(output, /kontakty: opening hours block must list the approved hours inside contact-address/);
+});
+
+test('rejects contacts pages whose MedicalClinic schema includes Sunday hours', () => {
+  const output = runMutation((distRoot) => {
+    const contactsPath = path.join(distRoot, 'kontakty', 'index.html');
+    const html = fs.readFileSync(contactsPath, 'utf8');
+    fs.writeFileSync(contactsPath, html.replace('"https://schema.org/Saturday"', '"https://schema.org/Saturday","https://schema.org/Sunday"'));
+  });
+  assert.match(output, /kontakty: MedicalClinic openingHoursSpecification must match the approved hours/);
+});
