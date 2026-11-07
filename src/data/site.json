@@ -5,6 +5,11 @@
   "address": "вул. Хоральська, 1А",
   "phone": "+380931080095",
   "phoneDisplay": "093 108 00 95",
+  "openingHours": [
+    { "label": "Понеділок–п’ятниця", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "09:00", "closes": "19:00" },
+    { "label": "Субота", "dayOfWeek": ["Saturday"], "opens": "10:00", "closes": "15:00" },
+    { "label": "Неділя", "dayOfWeek": ["Sunday"], "closed": true }
+  ],
   "emergencyNotice": "За загрози життю телефонуйте 103 або 112.",
   "medicalDisclaimer": "Інформація на сайті не замінює консультацію лікаря."
 }

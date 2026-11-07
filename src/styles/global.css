@@ -935,6 +935,14 @@ select[aria-invalid="true"] {
 .contact-primary .text-link {
   margin-top: 18px;
 }
+.contact-hours {
+  margin-top: 24px;
+}
+.contact-hours ul {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
 .service-detail-list {
   display: grid;
   gap: 24px;

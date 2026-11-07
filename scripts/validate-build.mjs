@@ -63,6 +63,35 @@ function validateHomepageSocialImage() {
 
 validateHomepageSocialImage();
 
+function validateContactHours() {
+  const contacts = files.find((file) => routeFor(file) === `${basePath}/kontakty/`);
+  if (!contacts) {
+    errors.push('kontakty: generated page is missing');
+    return;
+  }
+  const html = fs.readFileSync(contacts, 'utf8');
+  const hoursBlock = html.match(/<div class="contact-address">[\s\S]*?<div class="contact-hours">([\s\S]*?)<\/div>/)?.[1] || '';
+  const title = hoursBlock.match(/<h3>([^<]*)<\/h3>/)?.[1] || '';
+  const lines = [...hoursBlock.matchAll(/<li>([^<]*)<\/li>/g)].map((match) => match[1]);
+  const expectedLines = ['Понеділок–п’ятниця: 9:00–19:00', 'Субота: 10:00–15:00', 'Неділя: зачинено'];
+  if (title !== 'Години роботи' || JSON.stringify(lines) !== JSON.stringify(expectedLines)) {
+    errors.push('kontakty: opening hours block must list the approved hours inside contact-address');
+  }
+  const clinic = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi)]
+    .map((script) => { try { return JSON.parse(script[1]); } catch { return null; } })
+    .find((schema) => schema?.['@type'] === 'MedicalClinic');
+  const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((day) => `https://schema.org/${day}`);
+  const expectedSpecification = [
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: weekdays, opens: '09:00', closes: '19:00' },
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['https://schema.org/Saturday'], opens: '10:00', closes: '15:00' }
+  ];
+  if (JSON.stringify(clinic?.openingHoursSpecification) !== JSON.stringify(expectedSpecification)) {
+    errors.push('kontakty: MedicalClinic openingHoursSpecification must match the approved hours');
+  }
+}
+
+validateContactHours();
+
 for (const file of files) {
   const html = fs.readFileSync(file, 'utf8');
   const rel = path.relative(root, file).split(path.sep).join('/');
